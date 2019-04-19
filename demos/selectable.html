@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'/>
+    <link href='../packages/core/main.css' rel='stylesheet'/>
+    <link href='../packages/daygrid/main.css' rel='stylesheet'/>
+    <link href='../packages/timegrid/main.css' rel='stylesheet'/>
+    <script src='../packages/core/main.js'></script>
+    <script src='../packages/interaction/main.js'></script>
+    <script src='../packages/daygrid/main.js'></script>
+    <script src='../packages/timegrid/main.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js'></script>
+    <script>
+        let defaultDiv;
+        function yearFull(div) {
+            defaultDiv = new FullCalendar.Calendar(div, {
+                plugins: ['interaction', 'dayGrid'],
+                defaultDate: '2019-04-12',
+                editable: true,
+                events: massEvents(),
+                droppable: true, // will let it receive events!
+                eventReceive: function (info) {
+                    console.log('event received!', info.event);
+                }
+            });
+            defaultDiv.render();
+        }
+
+        function randomInteger(min, max) {
+            var rand = min + Math.random() * (max - min)
+            rand = Math.round(rand);
+            return rand;
+        }
+            let day;
+        function dataCalendar() {
+            day = moment().day(randomInteger(1, 12));
+            let ll = {
+                title: `${day}///${randomInteger(5, 32)}`,
+                start: moment(day).format("YYYY-MM-DD"),
+                end:  moment(day).add(120,'m').format()
+            };
+            return ll;
+        }
+
+        function massEvents() {
+            var mass = _.range(12);
+            _.each(mass, function (i,value) {
+                mass[i] = dataCalendar();
+            });
+            return mass;
+        }
+
+        $(`#content`).ready(function () {
+            var divEl;
+            var mass = _.range(12);
+            _.each(mass, function (value) {
+                console.log(value);
+                divEl = $('#content').append(`<div class="calendar" id="value${value}">value</div>`);
+            });
+            _.each($('.calendar'), function (value) {
+                console.log(value);
+                yearFull(value);
+            });
+        });
+
+    </script>
+    <style>
+
+        body {
+            margin: 40px 10px;
+            padding: 0;
+            font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+
+        #content{
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+    </style>
+</head>
+<body>
+<div id="content">
+    <div id='source-calendar'></div>
+</div>
+
+</body>
+</html>
